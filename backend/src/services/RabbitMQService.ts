@@ -1,6 +1,7 @@
-
+import { singleton } from 'tsyringe';
 import * as amqp from 'amqplib/callback_api';
 
+@singleton()
 export class RabbitMQService {
 
     private connection: amqp.Connection | null = null;

@@ -79,7 +79,7 @@ Para poner el proyecto en marcha, sigue estos pasos:
 
 ## Endpoints de la API del Backend
 
-(Añade detalles sobre los endpoints de tu API de backend aquí, por ejemplo, `/api/v1/counts`, `/api/v1/webhook`)
+(Añade detalles sobre los endpoints de tu API de backend aquí, por ejemplo, `/api/v1/counts`, `/api/v1/webhook/message`)
 
 ## Uso del Frontend
 

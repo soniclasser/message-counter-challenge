@@ -1,44 +1,50 @@
 import { Request, Response } from 'express';
+import { injectable } from 'tsyringe';
 import { Op } from 'sequelize';
-import { HourlyCount } from '../models/HourlyCount';
+import { HourlyCountRepository } from '../repositories/HourlyCountRepository';
 
-export const getCounts = async (req: Request, res: Response) => {
-  const { account_id, from, to } = req.query as { account_id?: string, from?: string, to?: string };
+@injectable()
+export class CountQueryController {
+  constructor(private readonly hourlyCountRepository: HourlyCountRepository) {}
 
-  if (!account_id || !from || !to) {
-    return res.status(400).send({ 
-      error: 'Parámetros faltantes. Requiere: account_id, from (ISO8601), to (ISO8601).' 
-    });
-  }
+  public getCounts = async (req: Request, res: Response) => {
+    const { account_id, from, to } = req.query as { account_id?: string, from?: string, to?: string };
 
-  try {
-    const counts = await HourlyCount.findAll({
-      where: {
-        account_id: account_id,
-        rounded_hour: {
-          [Op.gte]: new Date(from),
-          [Op.lt]: new Date(to),
+    if (!account_id || !from || !to) {
+      return res.status(400).send({
+        error: 'Parámetros faltantes. Requiere: account_id, from (ISO8601), to (ISO8601).'
+      });
+    }
+
+    try {
+      const counts = await this.hourlyCountRepository.findAll({
+        where: {
+          account_id: account_id,
+          rounded_hour: {
+            [Op.gte]: new Date(from),
+            [Op.lt]: new Date(to),
+          },
         },
-      },
-      attributes: [
-        'account_id',
-        [
-          'rounded_hour', 
-          'datetime'
+        attributes: [
+          'account_id',
+          [
+            'rounded_hour',
+            'datetime'
+          ],
+          [
+            'message_count',
+            'count_messages'
+          ]
         ],
-        [
-          'message_count', 
-          'count_messages'
-        ] 
-      ],
-      order: [['rounded_hour', 'ASC']],
-      raw: true,
-    });
+        order: [['rounded_hour', 'ASC']],
+        raw: true,
+      });
 
-    return res.json(counts);
+      return res.json(counts);
 
-  } catch (error) {
-    console.error("[Query] Error fetching counts:", error);
-    return res.status(500).send({ error: "Internal server error during query." });
-  }
-};
+    } catch (error) {
+      console.error("[Query] Error fetching counts:", error);
+      return res.status(500).send({ error: "Internal server error during query." });
+    }
+  };
+}

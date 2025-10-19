@@ -1,17 +1,19 @@
 import { Router } from 'express';
-import { handleWebhook } from '../controllers/WebhookController'; 
-import { getCounts } from '../controllers/CountQueryController'; 
-import { mockDailyTotal } from '../controllers/MockController'; 
-import { RabbitMQService } from '../services/RabbitMQService';
+import { container } from 'tsyringe';
+import { WebhookController } from '../controllers/WebhookController';
+import { CountQueryController } from '../controllers/CountQueryController';
+import { MockController } from '../controllers/MockController';
 
-export const createRouter = (rabbitMQService: RabbitMQService) => {
+export const createRouter = () => {
   const router = Router();
 
-  router.post('/webhook/message', handleWebhook(rabbitMQService));
+  const webhookController = container.resolve(WebhookController);
+  const countQueryController = container.resolve(CountQueryController);
+  const mockController = container.resolve(MockController);
 
-  router.get('/counts', getCounts);
-
-  router.post('/mock/daily-total', mockDailyTotal);
+  router.post('/webhook/message', webhookController.handleWebhook);
+  router.get('/counts', countQueryController.getCounts);
+  router.post('/mock/daily-total', mockController.mockDailyTotal);
 
   return router;
 };
