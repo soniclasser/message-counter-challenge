@@ -1,0 +1,21 @@
+# Dependencies
+/node_modules
+/backend/node_modules
+/frontend/node_modules
+
+# Build output
+/backend/dist
+/frontend/dist
+
+# Environment variables
+.env
+
+# Docker
+postgres_data/
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
