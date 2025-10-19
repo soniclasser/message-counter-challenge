@@ -1,5 +1,3 @@
-// /frontend/src/store/countStore.ts
-
 import { create } from 'zustand';
 import axios from 'axios';
 
